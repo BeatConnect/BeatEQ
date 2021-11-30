@@ -41,6 +41,7 @@ FrequalizerAudioProcessorEditor::FrequalizerAudioProcessorEditor (FrequalizerAud
     addAndMakeVisible (frame);
 
     output.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
+    output.setColour(Slider::ColourIds::thumbColourId, Colours::white.withAlpha(0.5f));
     addAndMakeVisible (output);
     attachments.add (new juce::AudioProcessorValueTreeState::SliderAttachment (freqProcessor.getPluginState(), FrequalizerAudioProcessor::paramOutput, output));
     output.setTooltip (TRANS ("Overall Gain"));
@@ -137,6 +138,10 @@ void FrequalizerAudioProcessorEditor::paint (juce::Graphics& g)
     }
     g.setColour (outputColour);
     g.strokePath (frequencyResponse, juce::PathStrokeType (3.0f));
+
+    g.setColour(secondary);
+    g.fillRoundedRectangle(output.getBounds().toFloat(), 5);
+    //g.fillRoundedRectangle(frame.getBounds().toFloat(), 5);
 }
 
 void FrequalizerAudioProcessorEditor::resized()
@@ -330,9 +335,12 @@ FrequalizerAudioProcessorEditor::BandEditor::BandEditor (size_t i, FrequalizerAu
     frame.setColour (juce::GroupComponent::outlineColourId, Colours::transparentBlack);
     addAndMakeVisible (frame);
 
+    frequency.setColour(Slider::ColourIds::thumbColourId, Colours::white.withAlpha(0.5f));
     frequency.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
     quality.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
+    quality.setColour(Slider::ColourIds::thumbColourId, Colours::white.withAlpha(0.5f));
     gain.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
+    gain.setColour(Slider::ColourIds::thumbColourId, Colours::white.withAlpha(0.5f));
 
     Colour primary = Colour::fromString("#FF1D1734");
     Colour secondary = Colour::fromString("#FF0C0915");
@@ -364,7 +372,8 @@ FrequalizerAudioProcessorEditor::BandEditor::BandEditor (size_t i, FrequalizerAu
     solo.setTooltip (TRANS ("Listen only through this filter (solo)"));
 
     activate.setClickingTogglesState (true);
-    activate.setColour (juce::TextButton::buttonOnColourId, juce::Colours::green);
+    activate.setColour (juce::TextButton::buttonOnColourId, juce::Colours::hotpink);
+    activate.setColour(juce::TextButton::ColourIds::textColourOnId, primary);
     activate.addListener(this);
     buttonAttachments.add (new juce::AudioProcessorValueTreeState::ButtonAttachment (processor.getPluginState(), processor.getActiveParamName (index), activate));
     addAndMakeVisible (activate);
