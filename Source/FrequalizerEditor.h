@@ -12,7 +12,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_opengl/juce_opengl.h>
 
-
+using namespace juce;
 //==============================================================================
 /**
 */
@@ -47,18 +47,14 @@ public:
         BandEditor (size_t i, FrequalizerAudioProcessor& processor);
 
         void resized () override;
-
         void updateControls (FrequalizerAudioProcessor::FilterType type);
-
         void updateSoloState (bool isSolo);
-
         void setFrequency (float frequency);
-
         void setGain (float gain);
-
         void setType (int type);
 
         void buttonClicked (juce::Button* b) override;
+        void paint(Graphics&) override;
 
         juce::Path frequencyResponse;
     private:
@@ -98,7 +94,7 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FrequalizerAudioProcessorEditor)
 
 #ifdef JUCE_OPENGL
- //   juce::OpenGLContext     openGLContext;
+    juce::OpenGLContext     openGLContext;
 #endif
 
     juce::OwnedArray<BandEditor>  bandEditors;

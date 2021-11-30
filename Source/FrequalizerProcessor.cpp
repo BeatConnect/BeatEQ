@@ -53,12 +53,12 @@ int FrequalizerAudioProcessor::getBandIndexFromID (juce::String paramID)
 std::vector<FrequalizerAudioProcessor::Band> createDefaultBands()
 {
     std::vector<FrequalizerAudioProcessor::Band> defaults;
-    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Lowest"),    juce::Colours::blue,   FrequalizerAudioProcessor::HighPass,    20.0f, 0.707f));
-    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Low"),       juce::Colours::brown,  FrequalizerAudioProcessor::LowShelf,   250.0f, 0.707f));
-    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Low Mids"),  juce::Colours::green,  FrequalizerAudioProcessor::Peak,       500.0f, 0.707f));
-    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("High Mids"), juce::Colours::coral,  FrequalizerAudioProcessor::Peak,      1000.0f, 0.707f));
-    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("High"),      juce::Colours::orange, FrequalizerAudioProcessor::HighShelf, 5000.0f, 0.707f));
-    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Highest"),   juce::Colours::red,    FrequalizerAudioProcessor::LowPass,  12000.0f, 0.707f));
+    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Lowest"),    juce::Colours::silver.withAlpha(0.5f),   FrequalizerAudioProcessor::HighPass,    20.0f, 0.707f));
+    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Low"),       juce::Colours::silver.withAlpha(0.5f),  FrequalizerAudioProcessor::LowShelf,   250.0f, 0.707f));
+    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Low Mids"),  juce::Colours::silver.withAlpha(0.5f),  FrequalizerAudioProcessor::Peak,       500.0f, 0.707f));
+    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("High Mids"), juce::Colours::silver.withAlpha(0.5f),  FrequalizerAudioProcessor::Peak,      1000.0f, 0.707f));
+    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("High"),      juce::Colours::silver.withAlpha(0.5f), FrequalizerAudioProcessor::HighShelf, 5000.0f, 0.707f));
+    defaults.push_back (FrequalizerAudioProcessor::Band (TRANS ("Highest"),   juce::Colours::silver.withAlpha(0.5f),    FrequalizerAudioProcessor::LowPass,  12000.0f, 0.707f));
     return defaults;
 }
 
@@ -561,9 +561,9 @@ void FrequalizerAudioProcessor::createFrequencyPlot (juce::Path& p, const std::v
 void FrequalizerAudioProcessor::createAnalyserPlot (juce::Path& p, const juce::Rectangle<int> bounds, float minFreq, bool input)
 {
     if (input)
-        inputAnalyser.createPath (p, bounds.toFloat(), minFreq);
+        inputAnalyser.createPath (p, bounds.toFloat(), minFreq, false);
     else
-        outputAnalyser.createPath (p, bounds.toFloat(), minFreq);
+        outputAnalyser.createPath (p, bounds.toFloat(), minFreq, true);
 }
 
 bool FrequalizerAudioProcessor::checkForNewAnalyserData()

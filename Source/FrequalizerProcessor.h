@@ -168,5 +168,5 @@ private:
     Analyser<float> inputAnalyser;
     Analyser<float> outputAnalyser;
 
-    juce::Point<int> editorSize = { 900, 500 };
+    juce::Point<int> editorSize = { 1100, 500 };
 };

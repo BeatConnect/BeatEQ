@@ -87,7 +87,7 @@ public:
         }
     }
 
-    void createPath (juce::Path& p, const juce::Rectangle<float> bounds, float minFreq)
+    void createPath (juce::Path& p, const juce::Rectangle<float> bounds, float minFreq, bool output)
     {
         p.clear();
         p.preallocateSpace (8 + averager.getNumSamples() * 3);
@@ -96,9 +96,28 @@ public:
         const auto* fftData = averager.getReadPointer (0);
         const auto  factor  = bounds.getWidth() / 10.0f;
 
-        p.startNewSubPath (bounds.getX() + factor * indexToX (0, minFreq), binToY (fftData [0], bounds));
+        int x = bounds.getX() + factor * indexToX(0, minFreq);
+        int y = binToY(fftData[0], bounds);
+        int bottom = bounds.getHeight() + bounds.getY();
+
+        if (output)
+        {
+            p.startNewSubPath(x, bottom);
+            p.lineTo(x, y);
+        }
+        else
+        {
+            p.startNewSubPath(bounds.getX() + factor * indexToX(0, minFreq), binToY(fftData[0], bounds));
+        }
+        
         for (int i = 0; i < averager.getNumSamples(); ++i)
             p.lineTo (bounds.getX() + factor * indexToX (float (i), minFreq), binToY (fftData [i], bounds));
+
+        if (output)
+        {
+            p.lineTo(p.getCurrentPosition().x, bottom);
+            p.lineTo(x, bottom);
+        }
     }
 
     bool checkForNewData()

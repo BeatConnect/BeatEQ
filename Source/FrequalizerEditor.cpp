@@ -18,9 +18,16 @@ static float maxDB       = 24.0f;
 FrequalizerAudioProcessorEditor::FrequalizerAudioProcessorEditor (FrequalizerAudioProcessor& p)
   : juce::AudioProcessorEditor (&p), freqProcessor (p)
 {
+    Colour primary = Colour::fromString("#FF1D1734");
+    Colour secondary = Colour::fromString("#FF0C0915");
+
+    LookAndFeel::getDefaultLookAndFeel().setColour(GroupComponent::ColourIds::outlineColourId, Colours::silver.withAlpha(0.5f));
+    LookAndFeel::getDefaultLookAndFeel().setColour(ComboBox::ColourIds::outlineColourId, Colours::white.withAlpha(1.0f));
+    LookAndFeel::getDefaultLookAndFeel().setColour(ComboBox::ColourIds::backgroundColourId, primary);
+
     tooltipWindow->setMillisecondsBeforeTipAppears (1000);
 
-    addAndMakeVisible (socialButtons);
+    //addAndMakeVisible (socialButtons);
 
     for (size_t i=0; i < freqProcessor.getNumBands(); ++i) {
         auto* bandEditor = bandEditors.add (new BandEditor (i, freqProcessor));
@@ -42,12 +49,12 @@ FrequalizerAudioProcessorEditor::FrequalizerAudioProcessorEditor (FrequalizerAud
     updateFrequencyResponses();
 
 #ifdef JUCE_OPENGL
-    //openGLContext.attachTo (*getTopLevelComponent());
+    openGLContext.attachTo (*getTopLevelComponent());
 #endif
 
     freqProcessor.addChangeListener (this);
 
-    startTimerHz (30);
+    startTimer(1000 / 30);
 }
 
 FrequalizerAudioProcessorEditor::~FrequalizerAudioProcessorEditor()
@@ -56,26 +63,27 @@ FrequalizerAudioProcessorEditor::~FrequalizerAudioProcessorEditor()
 
     freqProcessor.removeChangeListener (this);
 #ifdef JUCE_OPENGL
-    //openGLContext.detach();
+    openGLContext.detach();
 #endif
 }
 
 //==============================================================================
 void FrequalizerAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    const auto inputColour = juce::Colours::greenyellow;
-    const auto outputColour = juce::Colours::indianred;
+    const auto inputColour = Colour::fromString("#FF9F6EFF");
+    const auto outputColour = Colour::fromString("#FF53FFD7");
 
     juce::Graphics::ScopedSaveState state (g);
 
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-    /*
-    auto logo = juce::ImageCache::getFromMemory (FFAudioData::LogoFF_png, FFAudioData::LogoFF_pngSize);
-    g.drawImage (logo, brandingFrame.toFloat(), juce::RectanglePlacement (juce::RectanglePlacement::fillDestination));*/
+    Colour primary = Colour::fromString("#FF1D1734");
+    Colour secondary = Colour::fromString("#FF0C0915");
 
+    g.fillAll(primary);
+    
+    g.setColour(secondary);
     g.setFont (12.0f);
-    g.setColour (juce::Colours::silver);
-    g.drawRoundedRectangle (plotFrame.toFloat(), 5, 2);
+    g.fillRoundedRectangle(plotFrame.toFloat(), 5);
+    
     for (int i=0; i < 10; ++i) {
         g.setColour (juce::Colours::silver.withAlpha (0.3f));
         auto x = plotFrame.getX() + plotFrame.getWidth() * i * 0.1f;
@@ -108,7 +116,7 @@ void FrequalizerAudioProcessorEditor::paint (juce::Graphics& g)
     freqProcessor.createAnalyserPlot (analyserPath, plotFrame, 20.0f, false);
     g.setColour (outputColour);
     g.drawFittedText ("Output", plotFrame.reduced (8, 28), juce::Justification::topRight, 1);
-    g.strokePath (analyserPath, juce::PathStrokeType (1.0));
+    g.fillPath(analyserPath); //juce::PathStrokeType (1.0));
 
     for (size_t i=0; i < freqProcessor.getNumBands(); ++i) {
         auto* bandEditor = bandEditors.getUnchecked (int (i));
@@ -132,9 +140,12 @@ void FrequalizerAudioProcessorEditor::resized()
     freqProcessor.setSavedSize ({ getWidth(), getHeight() });
     plotFrame = getLocalBounds().reduced (3, 3);
 
-    socialButtons.setBounds (plotFrame.removeFromBottom (35));
+    //socialButtons.setBounds (plotFrame.removeFromBottom (35));
 
     auto bandSpace = plotFrame.removeFromBottom (getHeight() / 2);
+    bandSpace.removeFromTop(8);
+    bandSpace.removeFromBottom(4);
+
     auto width = juce::roundToInt (bandSpace.getWidth()) / (bandEditors.size() + 1);
     for (auto* bandEditor : bandEditors)
         bandEditor->setBounds (bandSpace.removeFromLeft (width));
@@ -309,9 +320,18 @@ FrequalizerAudioProcessorEditor::BandEditor::BandEditor (size_t i, FrequalizerAu
 {
     frame.setText (processor.getBandName (index));
     frame.setTextLabelPosition (juce::Justification::centred);
-    frame.setColour (juce::GroupComponent::textColourId, processor.getBandColour (index));
-    frame.setColour (juce::GroupComponent::outlineColourId, processor.getBandColour (index));
+    frame.setColour (juce::GroupComponent::textColourId, Colours::silver);
+    frame.setColour (juce::GroupComponent::outlineColourId, Colours::transparentBlack);
     addAndMakeVisible (frame);
+
+    frequency.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
+    quality.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
+    gain.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
+
+    Colour primary = Colour::fromString("#FF1D1734");
+    Colour secondary = Colour::fromString("#FF0C0915");
+    filterType.setColour(ComboBox::outlineColourId, secondary);
+    filterType.setColour(ComboBox::backgroundColourId, secondary);
 
     if (auto* choiceParameter = dynamic_cast<juce::AudioParameterChoice*>(processor.getPluginState().getParameter (processor.getTypeParamName (index))))
         filterType.addItemList (choiceParameter->choices, 1);
@@ -362,6 +382,18 @@ void FrequalizerAudioProcessorEditor::BandEditor::resized ()
 
     quality.setBounds (bounds.removeFromLeft (bounds.getWidth() / 2));
     gain.setBounds (bounds);
+}
+
+void FrequalizerAudioProcessorEditor::BandEditor::paint(Graphics& g)
+{
+    Colour primary = Colour::fromString("#FF1D1734");
+    Colour secondary = Colour::fromString("#FF0C0915");
+
+    Rectangle<int> rc(getLocalBounds());
+    rc.reduce(8, 0);
+
+    g.setColour(secondary);
+    g.fillRoundedRectangle(rc.toFloat(), 5);
 }
 
 void FrequalizerAudioProcessorEditor::BandEditor::updateControls (FrequalizerAudioProcessor::FilterType type)
