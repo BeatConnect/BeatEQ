@@ -117,6 +117,7 @@ public:
             float frequencyToUse, float qualityToUse, float gainToUse=1.0f, bool shouldBeActive=true)
           : name (nameToUse),
             colour (colourToUse),
+            initialColour (colourToUse),
             type (typeToUse),
             frequency (frequencyToUse),
             quality (qualityToUse),
@@ -126,6 +127,7 @@ public:
 
         juce::String name;
         juce::Colour colour;
+        juce::Colour initialColour;
         FilterType   type      = BandPass;
         float        frequency = 1000.0f;
         float        quality   = 1.0f;

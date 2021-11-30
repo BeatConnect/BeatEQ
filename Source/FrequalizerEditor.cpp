@@ -34,9 +34,13 @@ FrequalizerAudioProcessorEditor::FrequalizerAudioProcessorEditor (FrequalizerAud
         addAndMakeVisible (bandEditor);
     }
 
+    frame.setColour(juce::GroupComponent::textColourId, Colours::silver);
+    frame.setColour(juce::GroupComponent::outlineColourId, Colours::transparentBlack);
     frame.setText (TRANS ("Output"));
     frame.setTextLabelPosition (juce::Justification::centred);
     addAndMakeVisible (frame);
+
+    output.setColour(Slider::ColourIds::textBoxOutlineColourId, Colours::transparentBlack);
     addAndMakeVisible (output);
     attachments.add (new juce::AudioProcessorValueTreeState::SliderAttachment (freqProcessor.getPluginState(), FrequalizerAudioProcessor::paramOutput, output));
     output.setTooltip (TRANS ("Overall Gain"));
@@ -123,7 +127,7 @@ void FrequalizerAudioProcessorEditor::paint (juce::Graphics& g)
         auto* band = freqProcessor.getBand (i);
 
         g.setColour (band->active ? band->colour : band->colour.withAlpha (0.3f));
-        g.strokePath (bandEditor->frequencyResponse, juce::PathStrokeType (1.0));
+        g.strokePath (bandEditor->frequencyResponse, band->active ? juce::PathStrokeType(3.0) : juce::PathStrokeType (1.0));
         g.setColour (draggingBand == int (i) ? band->colour : band->colour.withAlpha (0.3f));
         auto x = juce::roundToInt (plotFrame.getX() + plotFrame.getWidth() * getPositionForFrequency (float (band->frequency)));
         auto y = juce::roundToInt (getPositionForGain (float (band->gain), float (plotFrame.getY()), float (plotFrame.getBottom())));
@@ -131,8 +135,8 @@ void FrequalizerAudioProcessorEditor::paint (juce::Graphics& g)
         g.drawVerticalLine (x, float (y + 5), float (plotFrame.getBottom()));
         g.fillEllipse (float (x - 3), float (y - 3), 6.0f, 6.0f);
     }
-    g.setColour (juce::Colours::silver);
-    g.strokePath (frequencyResponse, juce::PathStrokeType (1.0f));
+    g.setColour (outputColour);
+    g.strokePath (frequencyResponse, juce::PathStrokeType (3.0f));
 }
 
 void FrequalizerAudioProcessorEditor::resized()
@@ -150,8 +154,8 @@ void FrequalizerAudioProcessorEditor::resized()
     for (auto* bandEditor : bandEditors)
         bandEditor->setBounds (bandSpace.removeFromLeft (width));
 
-    frame.setBounds (bandSpace.removeFromTop (bandSpace.getHeight() / 2));
-    output.setBounds (frame.getBounds().reduced (8));
+    frame.setBounds (bandSpace);
+    output.setBounds (frame.getBounds().reduced (18));
 
     plotFrame.reduce (3, 3);
     brandingFrame = bandSpace.reduced (5);
@@ -318,6 +322,8 @@ FrequalizerAudioProcessorEditor::BandEditor::BandEditor (size_t i, FrequalizerAu
   : index (i),
     processor (p)
 {
+    addMouseListener(this, true);
+
     frame.setText (processor.getBandName (index));
     frame.setTextLabelPosition (juce::Justification::centred);
     frame.setColour (juce::GroupComponent::textColourId, Colours::silver);
@@ -359,9 +365,18 @@ FrequalizerAudioProcessorEditor::BandEditor::BandEditor (size_t i, FrequalizerAu
 
     activate.setClickingTogglesState (true);
     activate.setColour (juce::TextButton::buttonOnColourId, juce::Colours::green);
+    activate.addListener(this);
     buttonAttachments.add (new juce::AudioProcessorValueTreeState::ButtonAttachment (processor.getPluginState(), processor.getActiveParamName (index), activate));
     addAndMakeVisible (activate);
     activate.setTooltip (TRANS ("Activate or deactivate this filter"));
+
+    setAlpha(activate.getToggleState() ? 1.0f : 0.3f);
+    /*
+    FrequalizerAudioProcessor::Band* band = processor.getBand(i);
+    if (band != nullptr)
+    {
+        setAlpha(band->getToggleState() ? 1.0f : 0.3f);
+    }*/
 }
 
 void FrequalizerAudioProcessorEditor::BandEditor::resized ()
@@ -384,15 +399,43 @@ void FrequalizerAudioProcessorEditor::BandEditor::resized ()
     gain.setBounds (bounds);
 }
 
+void FrequalizerAudioProcessorEditor::BandEditor::mouseEnter(const MouseEvent& event)
+{
+    FrequalizerAudioProcessor::Band* band = processor.getBand(index);
+    if (band != nullptr)
+    {
+        band->colour = Colours::hotpink;
+    }
+
+    highlighted = true;
+    repaint();
+}
+
+void FrequalizerAudioProcessorEditor::BandEditor::mouseExit(const MouseEvent& event)
+{
+    FrequalizerAudioProcessor::Band* band = processor.getBand(index);
+    if (band != nullptr)
+    {
+        band->colour = band->initialColour;
+    }
+
+    highlighted = false;
+    repaint();
+}
+
 void FrequalizerAudioProcessorEditor::BandEditor::paint(Graphics& g)
 {
-    Colour primary = Colour::fromString("#FF1D1734");
-    Colour secondary = Colour::fromString("#FF0C0915");
+    Colour back = Colour::fromString("#FF0C0915");
+    FrequalizerAudioProcessor::Band* band = processor.getBand(index);
+    if (band != nullptr)
+    {
+        back = band->active ? back : back.withAlpha(0.5f);
+    }
 
     Rectangle<int> rc(getLocalBounds());
     rc.reduce(8, 0);
 
-    g.setColour(secondary);
+    g.setColour(highlighted ? back.brighter(0.02f) : back);
     g.fillRoundedRectangle(rc.toFloat(), 5);
 }
 
@@ -466,5 +509,10 @@ void FrequalizerAudioProcessorEditor::BandEditor::buttonClicked (juce::Button* b
 {
     if (b == &solo) {
         processor.setBandSolo (solo.getToggleState() ? int (index) : -1);
+    }
+
+    if (b == &activate)
+    {
+        setAlpha(b->getToggleState() ? 1.0f : 0.3f);
     }
 }

@@ -55,6 +55,8 @@ public:
 
         void buttonClicked (juce::Button* b) override;
         void paint(Graphics&) override;
+        void mouseEnter(const MouseEvent& event) override;
+        void mouseExit(const MouseEvent& event) override;
 
         juce::Path frequencyResponse;
     private:
@@ -73,6 +75,8 @@ public:
         juce::OwnedArray<juce::AudioProcessorValueTreeState::ComboBoxAttachment> boxAttachments;
         juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> attachments;
         juce::OwnedArray<juce::AudioProcessorValueTreeState::ButtonAttachment> buttonAttachments;
+
+        bool highlighted = false;
     };
 
 private:
@@ -106,7 +110,7 @@ private:
     juce::Path                    analyserPath;
 
     juce::GroupComponent          frame;
-    juce::Slider                  output { juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::TextBoxBelow };
+    juce::Slider                  output { juce::Slider::LinearVertical, juce::Slider::TextBoxBelow };
 
     SocialButtons                 socialButtons;
 
