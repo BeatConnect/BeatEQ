@@ -24,7 +24,7 @@ public:
     SocialButtons()
     {
         setOpaque (false);
-
+        /*
         auto* b = buttons.add (new juce::ImageButton());
         b->addListener (this);
         auto ffLogo = juce::ImageCache::getFromMemory (FFAudioData::LogoFF_png, FFAudioData::LogoFF_pngSize);
@@ -55,7 +55,7 @@ public:
         b->setImages (false, true, true, githubLogo, 1.0f, juce::Colours::transparentWhite, githubLogo, 0.7f, juce::Colours::transparentWhite, githubLogo, 0.7f, juce::Colours::transparentWhite);
         b->setComponentID ("https://github.com/ffAudio/");
         b->setTooltip (TRANS ("Find resources on Github"));
-        addAndMakeVisible (b);
+        addAndMakeVisible (b);*/
 
     }
 
@@ -63,8 +63,8 @@ public:
 
     void paint (juce::Graphics& g) override
     {
-        auto renderedText = juce::ImageCache::getFromMemory (FFAudioData::FFtext_png, FFAudioData::FFtext_pngSize);
-        g.drawImageWithin (renderedText, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement (juce::RectanglePlacement::xRight));
+      /*  auto renderedText = juce::ImageCache::getFromMemory (FFAudioData::FFtext_png, FFAudioData::FFtext_pngSize);
+        g.drawImageWithin (renderedText, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement (juce::RectanglePlacement::xRight));*/
     }
 
     void resized() override

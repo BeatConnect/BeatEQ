@@ -42,7 +42,7 @@ FrequalizerAudioProcessorEditor::FrequalizerAudioProcessorEditor (FrequalizerAud
     updateFrequencyResponses();
 
 #ifdef JUCE_OPENGL
-    openGLContext.attachTo (*getTopLevelComponent());
+    //openGLContext.attachTo (*getTopLevelComponent());
 #endif
 
     freqProcessor.addChangeListener (this);
@@ -56,7 +56,7 @@ FrequalizerAudioProcessorEditor::~FrequalizerAudioProcessorEditor()
 
     freqProcessor.removeChangeListener (this);
 #ifdef JUCE_OPENGL
-    openGLContext.detach();
+    //openGLContext.detach();
 #endif
 }
 
@@ -69,9 +69,9 @@ void FrequalizerAudioProcessorEditor::paint (juce::Graphics& g)
     juce::Graphics::ScopedSaveState state (g);
 
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
+    /*
     auto logo = juce::ImageCache::getFromMemory (FFAudioData::LogoFF_png, FFAudioData::LogoFF_pngSize);
-    g.drawImage (logo, brandingFrame.toFloat(), juce::RectanglePlacement (juce::RectanglePlacement::fillDestination));
+    g.drawImage (logo, brandingFrame.toFloat(), juce::RectanglePlacement (juce::RectanglePlacement::fillDestination));*/
 
     g.setFont (12.0f);
     g.setColour (juce::Colours::silver);
