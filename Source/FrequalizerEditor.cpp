@@ -371,12 +371,6 @@ FrequalizerAudioProcessorEditor::BandEditor::BandEditor (size_t i, FrequalizerAu
     activate.setTooltip (TRANS ("Activate or deactivate this filter"));
 
     setAlpha(activate.getToggleState() ? 1.0f : 0.3f);
-    /*
-    FrequalizerAudioProcessor::Band* band = processor.getBand(i);
-    if (band != nullptr)
-    {
-        setAlpha(band->getToggleState() ? 1.0f : 0.3f);
-    }*/
 }
 
 void FrequalizerAudioProcessorEditor::BandEditor::resized ()
