@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="qAF3fj" name="Equalizer" projectType="audioplug" useAppConfig="0"
+<JUCERPROJECT id="qAF3fj" name="BeatEQ" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
               pluginRTASCategory="1" pluginVST3Category="EQ">
-  <MAINGROUP id="jmPvVv" name="Equalizer">
+  <MAINGROUP id="jmPvVv" name="BeatEQ">
     <GROUP id="{392E3C13-AD35-0D8F-0B4C-6FA0B5733EB5}" name="Source">
       <FILE id="VbciaW" name="Analyser.h" compile="0" resource="0" file="Source/Analyser.h"/>
       <FILE id="bY0cXy" name="CMakeLists.txt" compile="0" resource="1" file="Source/CMakeLists.txt"/>
