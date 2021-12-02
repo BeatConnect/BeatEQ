@@ -53,8 +53,8 @@
     </VS2019>
     <XCODE_MAC targetFolder="Builds/MacOSX" hardenedRuntime="1" iosDevelopmentTeamID="G8YMP442PQ">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Equalizer"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="Equalizer" customXcodeFlags="CODE_SIGN_STYLE=Manual,&#10;OTHER_CODE_SIGN_FLAGS=--timestamp,&#10;ProvisioningStyle = Manual,&#10;"
+        <CONFIGURATION isDebug="1" name="Debug" targetName="BeatEQ - Debug"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="BeatEQ" customXcodeFlags="CODE_SIGN_STYLE=Manual,&#10;OTHER_CODE_SIGN_FLAGS=--timestamp,&#10;ProvisioningStyle = Manual,&#10;"
                        codeSigningIdentity="Developer ID Application"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
