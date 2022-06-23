@@ -76,6 +76,8 @@ public:
     void setBandSolo (int index);
     bool getBandSolo (int index) const;
 
+    bool fillMode = false;
+
     static juce::StringArray getFilterTypeNames();
 
     //==============================================================================

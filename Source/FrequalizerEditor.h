@@ -111,6 +111,7 @@ private:
 
     juce::GroupComponent          frame;
     juce::Slider                  output { juce::Slider::LinearVertical, juce::Slider::TextBoxBelow };
+    juce::TextButton              fillModeButton;
 
     SocialButtons                 socialButtons;
 

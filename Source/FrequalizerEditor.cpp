@@ -46,6 +46,20 @@ FrequalizerAudioProcessorEditor::FrequalizerAudioProcessorEditor (FrequalizerAud
     attachments.add (new juce::AudioProcessorValueTreeState::SliderAttachment (freqProcessor.getPluginState(), FrequalizerAudioProcessor::paramOutput, output));
     output.setTooltip (TRANS ("Overall Gain"));
 
+    fillModeButton.setButtonText("Fill");
+    fillModeButton.setClickingTogglesState(true);
+    fillModeButton.setToggleState(freqProcessor.fillMode, false);
+
+    fillModeButton.setColour(TextButton::ColourIds::buttonColourId, secondary);
+    fillModeButton.setColour(TextButton::ColourIds::textColourOnId, Colours::white);
+    fillModeButton.setColour(ComboBox::outlineColourId, secondary);
+
+    fillModeButton.setColour(TextButton::ColourIds::textColourOnId, Colours::cyan);
+    fillModeButton.setColour(TextButton::ColourIds::buttonOnColourId, Colours::cyan.darker(2.0f));
+    fillModeButton.setColour(ComboBox::outlineColourId, Colours::cyan.darker(2.0f));
+    fillModeButton.onClick = [this] { freqProcessor.fillMode = !freqProcessor.fillMode; };
+    addAndMakeVisible(fillModeButton);
+
     auto size = freqProcessor.getSavedSize();
     setResizable (true, true);
     setSize (size.x, size.y);
@@ -121,8 +135,9 @@ void FrequalizerAudioProcessorEditor::paint (juce::Graphics& g)
     freqProcessor.createAnalyserPlot (analyserPath, plotFrame, 20.0f, false);
     g.setColour (outputColour);
     g.drawFittedText ("Output", plotFrame.reduced (8, 28), juce::Justification::topRight, 1);
-    g.fillPath(analyserPath); //juce::PathStrokeType (1.0));
-
+    
+    freqProcessor.fillMode ? g.fillPath(analyserPath) : g.strokePath(analyserPath, juce::PathStrokeType(1.0));
+    
     for (size_t i=0; i < freqProcessor.getNumBands(); ++i) {
         auto* bandEditor = bandEditors.getUnchecked (int (i));
         auto* band = freqProcessor.getBand (i);
@@ -161,6 +176,8 @@ void FrequalizerAudioProcessorEditor::resized()
 
     frame.setBounds (bandSpace);
     output.setBounds (frame.getBounds().reduced (18));
+
+    fillModeButton.setBounds(3, 3, 50, 20);
 
     plotFrame.reduce (3, 3);
     brandingFrame = bandSpace.reduced (5);
